@@ -64,20 +64,20 @@ app.delete('/todos/:id', authenticate, (req, res) => {
 
   if (!ObjectID.isValid(id)) {
     return res.status(404).send();
-  } else {
-    Todo.findOne({
-      _id: id,
-      _creator: req.user._id
-    }).then((todo) => {
-      if (!todo) {
-        return res.status(404).send();
-      } else {
-        res.send({todo});
-      }
-    }, (e) => {
-      res.status(400).send();
-    });
   }
+
+  Todo.findOneAndRemove({
+    _id: id,
+    _creator: req.user._id
+  }).then((todo) => {
+    if (!todo) {
+      return res.status(404).send();
+    } else {
+      res.send({todo});
+    }
+  }, (e) => {
+    res.status(400).send();
+  });
 });
 
 app.patch('/todos/:id', authenticate, (req, res) => {
